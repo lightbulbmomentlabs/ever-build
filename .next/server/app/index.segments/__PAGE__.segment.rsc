@@ -1,0 +1,15 @@
+1:"$Sreact.fragment"
+2:I[99326,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"Hero"]
+3:I[54950,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"Problem"]
+4:I[22944,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"Solution"]
+5:I[37503,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"Features"]
+6:I[77143,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"Pricing"]
+7:I[67767,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"WhoItsFor"]
+8:I[86807,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"Comparison"]
+9:I[66015,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"FAQ"]
+a:I[94408,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"FinalCTA"]
+b:I[46619,["/_next/static/chunks/d720509ccaf12600.js","/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/54f045485b04cae8.js"],"Footer"]
+c:I[56921,["/_next/static/chunks/87c9765d6f523c0a.js","/_next/static/chunks/c5e18a53df5c32f6.js"],"OutletBoundary"]
+d:"$Sreact.suspense"
+0:{"buildId":"oC6OikeaqS86O8eW0J3R6","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen","children":[["$","$L2",null,{}],["$","$L3",null,{}],["$","$L4",null,{}],["$","$L5",null,{}],["$","$L6",null,{}],["$","$L7",null,{}],["$","$L8",null,{}],["$","$L9",null,{}],["$","$La",null,{}],["$","$Lb",null,{}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/87c9765d6f523c0a.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/54f045485b04cae8.js","async":true}]],["$","$Lc",null,{"children":["$","$d",null,{"name":"Next.MetadataOutlet","children":"$@e"}]}]]}],"loading":null,"isPartial":false}
+e:null

@@ -1,0 +1,256 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   EverBuild Brand Colors - CSS Variables
+   Based on EverBuild-Brand.md
+   ============================================ */
+
+@layer base {
+  :root {
+    /* ====================================
+       Light Theme (Default)
+       ==================================== */
+
+    /* Primary Palette - Trust & Strength */
+    --color-charcoal-blue: #2C3E50;
+    --color-steel-gray: #95A5A6;
+    --color-everbuild-orange: #E67E22;
+    --color-concrete-white: #F4F4F4;
+
+    /* Secondary Palette - Modern Construction */
+    --color-blueprint-teal: #1ABC9C;
+    --color-sandstone-tan: #D7BFAE;
+    --color-olive-green: #7F8C6B;
+
+    /* Highlight & Feedback Colors */
+    --color-success-green: #27AE60;
+    --color-warning-amber: #F39C12;
+    --color-error-red: #C0392B;
+
+    /* Semantic Color Mappings (Light Theme) */
+    --color-bg: var(--color-concrete-white);
+    --color-text: var(--color-charcoal-blue);
+    --color-secondary: var(--color-steel-gray);
+    --color-accent: var(--color-everbuild-orange);
+    --color-link: var(--color-blueprint-teal);
+    --color-border: #E0E0E0;
+
+    /* Additional Semantic Colors */
+    --color-card-bg: #FFFFFF;
+    --color-hover: #F8F9FA;
+    --color-focus: var(--color-blueprint-teal);
+    --color-disabled: #BDC3C7;
+  }
+
+  /* ============================================
+     Base Styles
+     ============================================ */
+
+  body {
+    @apply bg-[var(--color-bg)] text-[var(--color-text)] antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-[var(--color-text)];
+  }
+
+  h1 {
+    @apply text-5xl md:text-6xl;
+  }
+
+  h2 {
+    @apply text-4xl md:text-5xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  a {
+    @apply text-[var(--color-link)] hover:underline transition-colors;
+  }
+
+  button {
+    @apply transition-all duration-200;
+  }
+
+  input, textarea, select {
+    @apply bg-[var(--color-card-bg)] border-[var(--color-border)] text-[var(--color-text)];
+  }
+}
+
+/* ============================================
+   Component Classes - EverBuild Brand
+   ============================================ */
+
+@layer components {
+  /* Text Colors */
+  .text-charcoal-blue {
+    color: var(--color-charcoal-blue);
+  }
+
+  .text-steel-gray {
+    color: var(--color-steel-gray);
+  }
+
+  .text-everbuild-orange {
+    color: var(--color-everbuild-orange);
+  }
+
+  .text-blueprint-teal {
+    color: var(--color-blueprint-teal);
+  }
+
+  .text-success {
+    color: var(--color-success-green);
+  }
+
+  .text-warning {
+    color: var(--color-warning-amber);
+  }
+
+  .text-error {
+    color: var(--color-error-red);
+  }
+
+  /* Background Colors */
+  .bg-charcoal-blue {
+    background-color: var(--color-charcoal-blue);
+  }
+
+  .bg-steel-gray {
+    background-color: var(--color-steel-gray);
+  }
+
+  .bg-everbuild-orange {
+    background-color: var(--color-everbuild-orange);
+  }
+
+  .bg-concrete-white {
+    background-color: var(--color-concrete-white);
+  }
+
+  .bg-blueprint-teal {
+    background-color: var(--color-blueprint-teal);
+  }
+
+  .bg-sandstone-tan {
+    background-color: var(--color-sandstone-tan);
+  }
+
+  .bg-olive-green {
+    background-color: var(--color-olive-green);
+  }
+
+  /* Border Colors */
+  .border-everbuild-orange {
+    border-color: var(--color-everbuild-orange);
+  }
+
+  .border-blueprint-teal {
+    border-color: var(--color-blueprint-teal);
+  }
+
+  .border-steel-gray {
+    border-color: var(--color-steel-gray);
+  }
+
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-everbuild-orange text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-blueprint-teal text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all shadow-lg hover:shadow-xl;
+  }
+
+  .btn-outline {
+    @apply border-2 border-everbuild-orange text-[var(--color-everbuild-orange)] px-8 py-3 rounded-lg font-semibold hover:bg-everbuild-orange hover:text-white transition-all;
+  }
+
+  /* Card Styles */
+  .card {
+    @apply bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-xl p-6 shadow-md hover:shadow-lg transition-all;
+  }
+
+  .card-hover {
+    @apply card hover:transform hover:-translate-y-1;
+  }
+
+  /* Section Styles */
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+  }
+}
+
+/* ============================================
+   Custom Animations
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+/* ============================================
+   Scroll Animations
+   ============================================ */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
