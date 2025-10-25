@@ -97,7 +97,7 @@ export function FAQ() {
       <div className="absolute top-0 left-0 w-96 h-96 bg-blueprint-teal opacity-5 rounded-full filter blur-3xl" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-everbuild-orange opacity-5 rounded-full filter blur-3xl" />
 
-      <div className="container-custom relative z-10 px-4 md:px-8">
+      <div className="container-custom relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -96,7 +96,7 @@ export function FinalCTA() {
       <div className="absolute top-1/4 right-0 w-96 h-96 bg-everbuild-orange opacity-20 rounded-full filter blur-3xl animate-pulse" />
       <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-blueprint-teal opacity-20 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
 
-      <div className="container-custom relative z-10 px-4 md:px-8">
+      <div className="container-custom relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Content */}
           <motion.div

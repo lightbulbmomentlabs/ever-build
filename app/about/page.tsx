@@ -14,7 +14,7 @@ export default function AboutPage() {
       <Header />
 
       <main className="pt-24 pb-16 bg-concrete-white">
-        <div className="container-custom px-4 md:px-8">
+        <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="mb-16 text-center">

@@ -99,7 +99,7 @@ export function Comparison() {
       ref={sectionRef}
       className="section bg-gradient-to-b from-concrete-white to-[var(--color-bg)] relative overflow-hidden"
     >
-      <div className="container-custom relative z-10 px-4 md:px-8">
+      <div className="container-custom relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

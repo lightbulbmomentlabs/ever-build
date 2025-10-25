@@ -22,7 +22,7 @@ export function Footer() {
 
       <div className="container-custom relative z-10">
         {/* Main Footer Content */}
-        <div className="py-12 px-4 md:px-8 grid md:grid-cols-4 gap-8">
+        <div className="py-12 grid md:grid-cols-4 gap-8">
           {/* Brand Column */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
@@ -134,7 +134,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-steel-gray/20 py-8 px-4 md:px-8">
+        <div className="border-t border-steel-gray/20 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-concrete-white/60 text-sm">
               © {currentYear} EverBuild. All rights reserved.
