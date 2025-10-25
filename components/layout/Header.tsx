@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { X } from 'lucide-react';
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,14 +31,34 @@ export function Header() {
     };
   }, [isMobileMenuOpen]);
 
+  // Handle hash changes when navigating to home page with hash
+  useEffect(() => {
+    if (pathname === '/' && window.location.hash) {
+      const sectionId = window.location.hash.substring(1);
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [pathname]);
+
   const handleNavClick = (sectionId: string) => {
     setIsMobileMenuOpen(false);
-    setTimeout(() => {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
+
+    // If we're on the homepage, scroll to section
+    if (pathname === '/') {
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      // If we're on another page, navigate to home with hash
+      window.location.href = `/#${sectionId}`;
+    }
   };
 
   return (
@@ -73,38 +95,38 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Navigation - Optional for future */}
+          {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a
-              href="#features"
+            <button
+              onClick={() => handleNavClick('features')}
               className={`hover:text-everbuild-orange transition-colors font-medium ${
                 isScrolled ? 'text-concrete-white/90' : 'text-charcoal-blue/90'
               }`}
             >
               Features
-            </a>
-            <a
-              href="#pricing"
+            </button>
+            <button
+              onClick={() => handleNavClick('pricing')}
               className={`hover:text-everbuild-orange transition-colors font-medium ${
                 isScrolled ? 'text-concrete-white/90' : 'text-charcoal-blue/90'
               }`}
             >
               Pricing
-            </a>
-            <a
-              href="#faq"
+            </button>
+            <button
+              onClick={() => handleNavClick('faq')}
               className={`hover:text-everbuild-orange transition-colors font-medium ${
                 isScrolled ? 'text-concrete-white/90' : 'text-charcoal-blue/90'
               }`}
             >
               FAQ
-            </a>
-            <a
-              href="#signup"
+            </button>
+            <button
+              onClick={() => handleNavClick('signup')}
               className="px-6 py-2 bg-everbuild-orange text-white rounded-lg font-semibold hover:opacity-90 transition-all"
             >
               Get Started
-            </a>
+            </button>
           </nav>
 
           {/* Mobile Menu Button */}
