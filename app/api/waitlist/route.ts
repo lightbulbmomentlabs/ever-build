@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseClient, WaitlistLead } from '@/lib/supabase';
+import { syncLeadToHubSpot } from '@/lib/hubspot';
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,6 +62,19 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Sync to HubSpot (non-blocking - don't fail if this fails)
+    syncLeadToHubSpot({
+      name: data.name,
+      email: data.email,
+      company: data.company,
+      project_count: data.project_count,
+      phone: data.phone,
+      interested_in_call: data.interested_in_call,
+    }).catch((error) => {
+      // Log but don't throw - HubSpot sync is optional
+      console.error('HubSpot sync failed (non-critical):', error);
+    });
 
     // Return success response
     return NextResponse.json(
