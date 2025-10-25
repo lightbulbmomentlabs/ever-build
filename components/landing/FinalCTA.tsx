@@ -9,6 +9,7 @@ export function FinalCTA() {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,24 +44,42 @@ export function FinalCTA() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
-    // Simulate API call (will implement actual Supabase integration later)
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsSubmitting(false);
-    setIsSuccess(true);
-
-    // Reset form after success
-    setTimeout(() => {
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        projectCount: '',
-        phone: '',
-        interestedInCall: false,
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-    }, 3000);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit form');
+      }
+
+      setIsSuccess(true);
+
+      // Reset form after success
+      setTimeout(() => {
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          projectCount: '',
+          phone: '',
+          interestedInCall: false,
+        });
+        setIsSuccess(false);
+      }, 5000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -196,6 +215,13 @@ export function FinalCTA() {
                     Join the waitlist and be first to try EverBuild
                   </p>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-error-red/10 border-2 border-error-red rounded-lg p-4">
+                    <p className="text-error-red text-sm font-medium">{error}</p>
+                  </div>
+                )}
 
                 {/* Name */}
                 <div>
