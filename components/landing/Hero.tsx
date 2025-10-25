@@ -155,7 +155,7 @@ export function Hero() {
               </div>
               <p>
                 <span className="font-semibold text-charcoal-blue">Loved by builders</span> across
-                the US
+                the US and Canada
               </p>
             </motion.div>
           </motion.div>
