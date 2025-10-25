@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 const comparisonData = [
   {
     feature: 'Price',
-    everbuild: '$49-199/mo',
+    everbuild: '$149-299/mo',
     spreadsheets: 'Free*',
     competitors: '$500+/mo',
   },

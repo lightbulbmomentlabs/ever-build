@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 const tiers = [
   {
     name: 'Starter',
-    price: 49,
+    price: 149,
     period: 'month',
     description: 'Best for: Solo builders',
     features: [
@@ -23,7 +23,7 @@ const tiers = [
   },
   {
     name: 'Professional',
-    price: 99,
+    price: 199,
     period: 'month',
     description: 'Best for: Small teams',
     badge: 'Most Popular',
@@ -41,7 +41,7 @@ const tiers = [
   },
   {
     name: 'Business',
-    price: 199,
+    price: 299,
     period: 'month',
     description: 'Best for: Growing operations',
     features: [
@@ -215,7 +215,7 @@ export function Pricing() {
             </p>
             <p className="text-steel-gray">
               If you're building 10 homes a year, that's <span className="font-semibold text-charcoal-blue">100+ hours back</span>.
-              Worth way more than $99/month.
+              Worth way more than $199/month.
             </p>
           </div>
         </motion.div>
