@@ -40,7 +40,7 @@ export const metadata: Metadata = {
       'Spec-home builders are saving 15+ hours/week with automated SMS coordination. No more phone tag, no more delays. Join 200+ builders finishing projects on time, every time.',
     images: [
       {
-        url: '/images/meta/EverBuild-Feat-Img.jpg',
+        url: 'https://everbuild.app/images/meta/EverBuild-Feat-Img.jpg',
         width: 1200,
         height: 630,
         alt: 'EverBuild - Automated Construction Coordination for Spec-Home Builders',
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: 'Stop Chasing Subcontractors. Start Building Faster. | EverBuild',
     description:
       'Spec-home builders are saving 15+ hours/week with automated SMS coordination. Join 200+ builders finishing projects on time.',
-    images: ['/images/meta/EverBuild-Feat-Img.jpg'],
+    images: ['https://everbuild.app/images/meta/EverBuild-Feat-Img.jpg'],
     creator: '@everbuild',
     site: '@everbuild',
   },
