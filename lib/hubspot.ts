@@ -112,7 +112,7 @@ async function updateExistingContact(contactData: {
         filters: [
           {
             propertyName: 'email',
-            operator: 'EQ',
+            operator: 'EQ' as any,
             value: contactData.email,
           },
         ],
@@ -167,8 +167,8 @@ export async function addContactToList(
   try {
     const hubspot = createHubSpotClient();
 
-    await hubspot.crm.lists.membershipsApi.addAndRemove(Number(listId), {
-      recordIdsToAdd: [Number(contactId)],
+    await hubspot.crm.lists.membershipsApi.addAndRemove(listId, {
+      recordIdsToAdd: [contactId],
       recordIdsToRemove: [],
     });
   } catch (error: any) {
