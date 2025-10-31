@@ -37,7 +37,7 @@ export default function SignUpPage() {
                 />
               </svg>
             </div>
-            <span className="text-3xl font-bold">EverBuild</span>
+            <span className="text-3xl font-bold text-white">EverBuild</span>
           </Link>
 
           <h1 className="text-4xl font-bold mb-6">
