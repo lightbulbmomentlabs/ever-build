@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     // Get only the 5 most recent projects
     const displayProjects = recentProjects.slice(0, 5);
 
-  return (
+    return (
     <div>
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-charcoal-blue">Dashboard</h1>
@@ -187,5 +187,9 @@ export default async function DashboardPage() {
         )}
       </div>
     </div>
-  );
+    );
+  } catch (error) {
+    console.error('[Dashboard] Error loading dashboard:', error);
+    throw error;
+  }
 }
