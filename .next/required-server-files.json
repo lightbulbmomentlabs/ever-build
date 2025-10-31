@@ -63,7 +63,13 @@
           "search": ""
         }
       ],
-      "remotePatterns": [],
+      "remotePatterns": [
+        {
+          "protocol": "https",
+          "hostname": "dkdxthkhuzgrkzmhmxst.supabase.co",
+          "pathname": "/storage/v1/object/public/**"
+        }
+      ],
       "qualities": [
         75
       ],

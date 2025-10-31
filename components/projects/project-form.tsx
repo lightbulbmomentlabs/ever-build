@@ -21,6 +21,9 @@ type Project = {
   state: string;
   zip_code: string;
   lot_number?: string | null;
+  block_number?: string | null;
+  subdivision?: string | null;
+  parcel_number?: string | null;
   model_type?: string | null;
   square_footage?: number | null;
   status: 'not_started' | 'active' | 'on_hold' | 'under_contract' | 'irsa' | 'sold' | 'warranty_period' | 'archived';
@@ -49,6 +52,9 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
     state: project?.state || '',
     zip_code: project?.zip_code || '',
     lot_number: project?.lot_number || '',
+    block_number: project?.block_number || '',
+    subdivision: project?.subdivision || '',
+    parcel_number: project?.parcel_number || '',
     model_type: project?.model_type || '',
     square_footage: project?.square_footage || '',
     status: project?.status || 'not_started',
@@ -82,6 +88,9 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
         body: JSON.stringify({
           ...formData,
           lot_number: formData.lot_number || null,
+          block_number: formData.block_number || null,
+          subdivision: formData.subdivision || null,
+          parcel_number: formData.parcel_number || null,
           model_type: formData.model_type || null,
           square_footage: formData.square_footage ? parseInt(formData.square_footage as string) : null,
           actual_completion_date: formData.actual_completion_date || null,
@@ -184,7 +193,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
           </div>
 
           {/* Project Details */}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-4">
             <div className="space-y-2">
               <Label htmlFor="lot_number">Lot Number</Label>
               <Input
@@ -195,6 +204,38 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
               />
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="block_number">Block Number</Label>
+              <Input
+                id="block_number"
+                placeholder="5"
+                value={formData.block_number}
+                onChange={(e) => setFormData({ ...formData, block_number: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="subdivision">Sub-division</Label>
+              <Input
+                id="subdivision"
+                placeholder="Oak Hills"
+                value={formData.subdivision}
+                onChange={(e) => setFormData({ ...formData, subdivision: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="parcel_number">Parcel Number (PIN)</Label>
+              <Input
+                id="parcel_number"
+                placeholder="123-456-789"
+                value={formData.parcel_number}
+                onChange={(e) => setFormData({ ...formData, parcel_number: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="model_type">Model Type</Label>
               <Input

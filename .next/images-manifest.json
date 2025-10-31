@@ -41,7 +41,13 @@
         "search": ""
       }
     ],
-    "remotePatterns": [],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "^(?:^(?:dkdxthkhuzgrkzmhmxst\\.supabase\\.co)$)$",
+        "pathname": "^(?:\\/storage\\/v1\\/object\\/public(?:\\/(?!\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)|$))$"
+      }
+    ],
     "qualities": [
       75
     ],
