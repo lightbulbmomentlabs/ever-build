@@ -191,7 +191,7 @@ export default async function ProjectDetailPage({
 
       {/* Tabs: Timeline & Documents */}
       <ProjectDetailTabs
-        projectId={project.id}
+        projectId={project.slug}
         phases={project.phases}
         documents={documents}
       />
