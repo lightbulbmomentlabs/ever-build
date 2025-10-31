@@ -21,23 +21,30 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  // Ensure user exists in Supabase (creates on first visit)
-  await ensureUserExists();
+  try {
+    // Ensure user exists in Supabase (creates on first visit)
+    console.log('[Dashboard] Ensuring user exists for userId:', userId);
+    await ensureUserExists();
 
-  const user = await getUserByClerkId(userId);
-  if (!user) {
-    redirect('/sign-in');
-  }
+    console.log('[Dashboard] Fetching user from Supabase');
+    const user = await getUserByClerkId(userId);
+    if (!user) {
+      console.error('[Dashboard] User not found in Supabase after ensureUserExists');
+      throw new Error('User not found in database after sync');
+    }
 
-  // Fetch dashboard data
-  const [projectStats, recentProjects, contacts] = await Promise.all([
-    getProjectStats(user.organization_id),
-    getProjectsWithPhases(user.organization_id),
-    getContacts(user.organization_id, { is_active: true }),
-  ]);
+    console.log('[Dashboard] Fetching dashboard data for org:', user.organization_id);
+    // Fetch dashboard data
+    const [projectStats, recentProjects, contacts] = await Promise.all([
+      getProjectStats(user.organization_id),
+      getProjectsWithPhases(user.organization_id),
+      getContacts(user.organization_id, { is_active: true }),
+    ]);
 
-  // Get only the 5 most recent projects
-  const displayProjects = recentProjects.slice(0, 5);
+    console.log('[Dashboard] Successfully loaded dashboard data');
+
+    // Get only the 5 most recent projects
+    const displayProjects = recentProjects.slice(0, 5);
 
   return (
     <div>
