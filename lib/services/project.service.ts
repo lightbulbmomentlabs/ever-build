@@ -251,7 +251,7 @@ export async function getProjectStats(organizationId: string): Promise<{
   }
 
   const stats = {
-    total: data.length,
+    total: 0,
     not_started: 0,
     active: 0,
     on_hold: 0,
@@ -263,14 +263,31 @@ export async function getProjectStats(organizationId: string): Promise<{
   };
 
   data.forEach((project) => {
-    if (project.status === 'not_started') stats.not_started++;
-    else if (project.status === 'active') stats.active++;
-    else if (project.status === 'on_hold') stats.on_hold++;
-    else if (project.status === 'under_contract') stats.under_contract++;
-    else if (project.status === 'irsa') stats.irsa++;
-    else if (project.status === 'sold') stats.sold++;
-    else if (project.status === 'warranty_period') stats.warranty_period++;
-    else if (project.status === 'archived') stats.archived++;
+    if (project.status === 'not_started') {
+      stats.not_started++;
+      stats.total++;
+    } else if (project.status === 'active') {
+      stats.active++;
+      stats.total++;
+    } else if (project.status === 'on_hold') {
+      stats.on_hold++;
+      stats.total++;
+    } else if (project.status === 'under_contract') {
+      stats.under_contract++;
+      stats.total++;
+    } else if (project.status === 'irsa') {
+      stats.irsa++;
+      stats.total++;
+    } else if (project.status === 'sold') {
+      stats.sold++;
+      stats.total++;
+    } else if (project.status === 'warranty_period') {
+      stats.warranty_period++;
+      stats.total++;
+    } else if (project.status === 'archived') {
+      stats.archived++;
+      // Don't increment total for archived projects
+    }
   });
 
   return stats;

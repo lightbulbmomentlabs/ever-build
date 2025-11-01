@@ -9,22 +9,28 @@
 import { Sidebar } from '@/components/layout/sidebar';
 import { MobileNav } from '@/components/layout/mobile-nav';
 import { Toaster } from '@/components/ui/toaster';
+import { auth } from '@clerk/nextjs/server';
+import { isUserAdmin } from '@/lib/services/admin.service';
 
-export default function AppLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Check if user is admin
+  const { userId } = await auth();
+  const isAdmin = userId ? await isUserAdmin(userId) : false;
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Desktop Sidebar - Hidden on mobile */}
-      <Sidebar />
+      <Sidebar isAdmin={isAdmin} />
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         {/* Mobile Header with Hamburger Menu */}
         <div className="sticky top-0 z-40 flex items-center gap-4 border-b bg-white px-4 py-3 md:hidden">
-          <MobileNav />
+          <MobileNav isAdmin={isAdmin} />
           <div className="flex items-center gap-2">
             <div className="w-6 h-6">
               <svg

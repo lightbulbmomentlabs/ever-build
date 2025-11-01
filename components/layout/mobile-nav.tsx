@@ -24,9 +24,17 @@ import {
   FolderKanban,
   Users,
   Settings,
+  Shield,
 } from 'lucide-react';
 
-const navigation = [
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: React.ElementType;
+  adminOnly?: boolean;
+}
+
+const baseNavigation: NavigationItem[] = [
   {
     name: 'Dashboard',
     href: '/dashboard',
@@ -47,11 +55,24 @@ const navigation = [
     href: '/settings',
     icon: Settings,
   },
+  {
+    name: 'Admin',
+    href: '/admin',
+    icon: Shield,
+    adminOnly: true,
+  },
 ];
 
-export function MobileNav() {
+interface MobileNavProps {
+  isAdmin: boolean;
+}
+
+export function MobileNav({ isAdmin }: MobileNavProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  // Filter navigation based on admin status
+  const navigation = baseNavigation.filter(item => !item.adminOnly || isAdmin);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -95,6 +116,7 @@ export function MobileNav() {
             {navigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               const Icon = item.icon;
+              const isAdminLink = item.adminOnly;
 
               return (
                 <Link
@@ -103,9 +125,10 @@ export function MobileNav() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     'flex items-center gap-3 rounded-lg px-4 py-3.5 text-base font-medium transition-colors min-h-[48px]',
-                    isActive
-                      ? 'bg-everbuild-orange/10 text-everbuild-orange'
-                      : 'text-charcoal-blue/80 hover:bg-concrete-white hover:text-everbuild-orange'
+                    isAdminLink && isActive && 'bg-purple-50 text-purple-700',
+                    isAdminLink && !isActive && 'text-purple-600 hover:bg-purple-50 hover:text-purple-700',
+                    !isAdminLink && isActive && 'bg-everbuild-orange/10 text-everbuild-orange',
+                    !isAdminLink && !isActive && 'text-charcoal-blue/80 hover:bg-concrete-white hover:text-everbuild-orange'
                   )}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />

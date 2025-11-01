@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import { ClerkProvider } from '@clerk/nextjs';
+import { ErrorTrackingProvider } from '@/components/error-tracking-provider';
+import { ErrorBoundary } from '@/components/error-boundary';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -88,7 +90,11 @@ export default function RootLayout({
               gtag('config', 'G-SP1XC2MCYS');
             `}
           </Script>
-          {children}
+          <ErrorTrackingProvider>
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
+          </ErrorTrackingProvider>
         </body>
       </html>
     </ClerkProvider>
