@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getUserByClerkId } from '@/lib/services/user.service';
 import { getContacts } from '@/lib/services/contact.service';
 import { ContactsTable } from '@/components/contacts/contacts-table';
+import { ContactsEmptyState } from '@/components/contacts/contacts-empty-state';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -41,12 +42,7 @@ export default async function ContactsPage() {
       </div>
 
       {contacts.length === 0 ? (
-        <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
-          <p className="text-steel-gray">No contacts yet. Add your first contact to get started.</p>
-          <Link href="/contacts/new">
-            <Button className="mt-4">Add Your First Contact</Button>
-          </Link>
-        </div>
+        <ContactsEmptyState />
       ) : (
         <ContactsTable contacts={contacts} />
       )}

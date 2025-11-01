@@ -36,8 +36,11 @@ export async function getContacts(
     query = query.eq('trade', filters.trade);
   }
 
+  // Default to only active contacts unless explicitly filtering
   if (filters?.is_active !== undefined) {
     query = query.eq('is_active', filters.is_active);
+  } else {
+    query = query.eq('is_active', true);
   }
 
   if (filters?.search) {

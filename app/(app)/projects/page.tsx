@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getUserByClerkId } from '@/lib/services/user.service';
 import { getProjectsWithPhases } from '@/lib/services/project.service';
 import { ProjectsTable } from '@/components/projects/projects-table';
+import { ProjectsEmptyState } from '@/components/projects/projects-empty-state';
 
 /**
  * Projects List Page
@@ -45,9 +46,7 @@ export default async function ProjectsPage() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
-          <p className="text-steel-gray">No projects yet. Create your first project to get started.</p>
-        </div>
+        <ProjectsEmptyState />
       ) : (
         <ProjectsTable projects={projects} />
       )}

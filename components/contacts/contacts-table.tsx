@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { DestructiveConfirmationDialog } from '@/components/ui/destructive-confirmation-dialog';
 import { formatPhoneDisplay } from '@/lib/utils/phone';
 import { SendSMSModal } from '@/components/sms/send-sms-modal';
 import { ContactAvatar } from '@/components/contacts/contact-avatar';
@@ -46,6 +47,8 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'card'>('card');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // Load view preference from localStorage on mount
   useEffect(() => {
@@ -69,14 +72,17 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
       contact.trade.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDelete = async (contactId: string) => {
-    if (!confirm('Are you sure you want to delete this contact?')) {
-      return;
-    }
+  const handleDeleteClick = (contactId: string, contactName: string) => {
+    setContactToDelete({ id: contactId, name: contactName });
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!contactToDelete) return;
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/contacts/${contactId}`, {
+      const response = await fetch(`/api/contacts/${contactToDelete.id}`, {
         method: 'DELETE',
       });
 
@@ -85,7 +91,8 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
       }
 
       // Remove from local state
-      setContacts(contacts.filter((c) => c.id !== contactId));
+      setContacts(contacts.filter((c) => c.id !== contactToDelete.id));
+      setContactToDelete(null);
     } catch (error) {
       console.error('Error deleting contact:', error);
       alert('Failed to delete contact. Please try again.');
@@ -181,7 +188,7 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
                           variant="outline"
                           size="sm"
                           className="h-8 text-error-red hover:bg-error-red/10 hover:text-error-red"
-                          onClick={() => handleDelete(contact.id)}
+                          onClick={() => handleDeleteClick(contact.id, contact.contact_person)}
                           disabled={isLoading}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -209,7 +216,7 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
                 <ContactCard
                   key={contact.id}
                   contact={contact}
-                  onDelete={handleDelete}
+                  onDelete={(id) => handleDeleteClick(id, contact.contact_person)}
                   isDeleting={isLoading}
                 />
               ))}
@@ -217,6 +224,19 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
           )}
         </>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DestructiveConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Contact"
+        description={`Are you sure you want to delete ${contactToDelete?.name}? This will permanently remove the contact and all associated data.`}
+        itemName={contactToDelete?.name}
+        confirmationWord="DELETE"
+        confirmButtonLabel="Delete Contact"
+        isLoading={isLoading}
+      />
     </div>
   );
 }
