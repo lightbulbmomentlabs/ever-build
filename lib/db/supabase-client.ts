@@ -163,7 +163,6 @@ export type Database = {
           organization_id: string;
           company_name: string;
           contact_person: string;
-          trade: string;
           phone_primary: string;
           phone_secondary: string | null;
           email: string | null;
@@ -179,7 +178,6 @@ export type Database = {
           organization_id: string;
           company_name: string;
           contact_person: string;
-          trade: string;
           phone_primary: string;
           phone_secondary?: string | null;
           email?: string | null;
@@ -195,7 +193,6 @@ export type Database = {
           organization_id?: string;
           company_name?: string;
           contact_person?: string;
-          trade?: string;
           phone_primary?: string;
           phone_secondary?: string | null;
           email?: string | null;
