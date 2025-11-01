@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { ContactForm } from '@/components/contacts/contact-form';
+import { ContactFormWrapper } from '@/components/contacts/contact-form';
 
 /**
  * New Contact Page
@@ -23,7 +23,7 @@ export default async function NewContactPage() {
         </p>
       </div>
 
-      <ContactForm mode="create" />
+      <ContactFormWrapper mode="create" />
     </div>
   );
 }

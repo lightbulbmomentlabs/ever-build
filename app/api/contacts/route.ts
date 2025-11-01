@@ -32,7 +32,6 @@ export async function GET(req: NextRequest) {
     // Get filters from query params
     const { searchParams } = new URL(req.url);
     const filters = {
-      trade: searchParams.get('trade') || undefined,
       is_active: searchParams.get('is_active') === 'true' ? true :
                  searchParams.get('is_active') === 'false' ? false : undefined,
       search: searchParams.get('search') || undefined,

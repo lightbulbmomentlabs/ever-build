@@ -34,7 +34,6 @@ function formatPhoneToE164(phone: string): string {
 export const contactSchema = z.object({
   company_name: z.string().min(2, 'Company name must be at least 2 characters'),
   contact_person: z.string().min(2, 'Contact person must be at least 2 characters'),
-  trade: z.string().min(2, 'Trade must be at least 2 characters'),
   phone_primary: z
     .string()
     .refine(
@@ -70,7 +69,6 @@ export const contactSchema = z.object({
  * Used for filtering contacts list
  */
 export const contactFilterSchema = z.object({
-  trade: z.string().optional(),
   is_active: z.boolean().optional(),
   search: z.string().optional(),
 });

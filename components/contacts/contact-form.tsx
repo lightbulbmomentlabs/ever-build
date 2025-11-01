@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ContactAvatar } from '@/components/contacts/contact-avatar';
 import { ImageCropModal } from '@/components/shared/image-crop-modal';
+import { CategorySelector, getPendingCategoryAssignments } from '@/components/contacts/category-selector';
 import { useToast } from '@/hooks/use-toast';
 import { formatFileSize, calculateReduction } from '@/lib/utils/image-processing';
 
@@ -22,7 +23,6 @@ type Contact = {
   id?: string;
   company_name: string;
   contact_person: string;
-  trade: string;
   phone_primary: string;
   phone_secondary?: string | null;
   email?: string | null;
@@ -45,11 +45,13 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
   const [imageUrl, setImageUrl] = useState(contact?.image_url);
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [pendingImageStats, setPendingImageStats] = useState<{ originalSize: number; optimizedSize: number } | null>(null);
+  const [categoryAssignments, setCategoryAssignments] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
     company_name: contact?.company_name || '',
     contact_person: contact?.contact_person || '',
-    trade: contact?.trade || '',
     phone_primary: contact?.phone_primary || '',
     phone_secondary: contact?.phone_secondary || '',
     email: contact?.email || '',
@@ -84,6 +86,32 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
         throw new Error(data.error || 'Failed to save contact');
       }
 
+      // If we're creating, handle pending image and category assignments
+      if (mode === 'create') {
+        const data = await response.json();
+        const newContact = data.contact;
+
+        // Upload pending image if any
+        if (pendingImageFile) {
+          await uploadPendingImage(newContact.id);
+        }
+
+        // Save category assignments if any
+        if (categoryAssignments.length > 0) {
+          await saveCategoryAssignments(newContact.id);
+        }
+
+        toast({
+          title: 'Contact created',
+          description: 'Contact has been created successfully',
+        });
+      } else {
+        toast({
+          title: 'Contact updated',
+          description: 'Contact has been updated successfully',
+        });
+      }
+
       router.push('/contacts');
       router.refresh();
     } catch (err) {
@@ -100,16 +128,6 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
 
     // Clear the input value so the same file can be selected again
     event.target.value = '';
-
-    // Only allow upload in edit mode (contact must exist)
-    if (!contact?.id) {
-      toast({
-        title: 'Cannot upload image',
-        description: 'Please save the contact first before uploading an image',
-        variant: 'destructive',
-      });
-      return;
-    }
 
     // Validate file size
     if (file.size > 10 * 1024 * 1024) {
@@ -143,6 +161,26 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
     file: File,
     stats: { originalSize: number; optimizedSize: number }
   ) => {
+    // In create mode, store the file for later upload
+    if (mode === 'create') {
+      setPendingImageFile(file);
+      setPendingImageStats(stats);
+      setImageUrl(URL.createObjectURL(file)); // Show preview
+
+      const reduction = calculateReduction(stats.originalSize, stats.optimizedSize);
+      toast({
+        title: 'Image ready',
+        description: `Image will be uploaded when contact is created. Optimized from ${formatFileSize(stats.originalSize)} to ${formatFileSize(stats.optimizedSize)} (${reduction}% reduction)`,
+      });
+
+      // Clean up object URL
+      if (selectedImageSrc) {
+        URL.revokeObjectURL(selectedImageSrc);
+      }
+      return;
+    }
+
+    // In edit mode, upload immediately
     if (!contact?.id) return;
 
     try {
@@ -184,8 +222,81 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
     }
   };
 
+  // Upload pending image to newly created contact
+  const uploadPendingImage = async (contactId: string) => {
+    if (!pendingImageFile || !pendingImageStats) return;
+
+    const formData = new FormData();
+    formData.append('file', pendingImageFile);
+
+    const response = await fetch(`/api/contacts/${contactId}/image`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to upload image');
+    }
+
+    const reduction = calculateReduction(pendingImageStats.originalSize, pendingImageStats.optimizedSize);
+
+    toast({
+      title: 'Image uploaded successfully',
+      description: `Optimized from ${formatFileSize(pendingImageStats.originalSize)} to ${formatFileSize(pendingImageStats.optimizedSize)} (${reduction}% reduction)`,
+    });
+  };
+
+  // Save category assignments to newly created contact
+  const saveCategoryAssignments = async (contactId: string) => {
+    if (categoryAssignments.length === 0) return;
+
+    try {
+      const pendingAssignments = getPendingCategoryAssignments(categoryAssignments);
+
+      // Save each assignment
+      const promises = pendingAssignments.map((assignment) =>
+        fetch(`/api/contacts/${contactId}/categories`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(assignment),
+        })
+      );
+
+      await Promise.all(promises);
+
+      toast({
+        title: 'Categories saved',
+        description: `${categoryAssignments.length} category assignment(s) saved successfully`,
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Category save failed',
+        description: `Contact created but category assignments failed: ${error.message}`,
+        variant: 'destructive',
+      });
+    }
+  };
+
   // Image delete handler
   const handleImageDelete = async () => {
+    // In create mode, just clear the pending image
+    if (mode === 'create') {
+      setPendingImageFile(null);
+      setPendingImageStats(null);
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
+      setImageUrl(null);
+
+      toast({
+        title: 'Image removed',
+        description: 'Image has been removed from the contact',
+      });
+      return;
+    }
+
+    // In edit mode, delete from server
     if (!contact?.id) return;
 
     try {
@@ -227,67 +338,67 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Image Upload Section - Only show in edit mode */}
-        {mode === 'edit' && contact?.id && (
-          <div className="mb-6 border-b pb-6">
-            <label className="block text-sm font-medium text-charcoal-blue mb-4">
-              Contact Image
-            </label>
-            <div className="flex items-center gap-6">
-              <ContactAvatar
-                name={formData.contact_person}
-                imageUrl={imageUrl}
-                size="md"
-              />
+        {/* Image Upload Section - Show in both create and edit mode */}
+        <div className="mb-6 border-b pb-6">
+          <label className="block text-sm font-medium text-charcoal-blue mb-4">
+            Contact Image
+          </label>
+          <div className="flex items-center gap-6">
+            <ContactAvatar
+              name={formData.contact_person}
+              imageUrl={imageUrl}
+              size="md"
+            />
 
-              <div className="flex-1">
-                <p className="text-sm text-steel-gray mb-3">
-                  Upload a photo or logo for this contact. Max file size: 5MB.
-                </p>
-                <div className="flex gap-2">
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      className="hidden"
-                      onChange={handleImageSelect}
-                      disabled={uploadingImage}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={uploadingImage}
-                      asChild
-                    >
-                      <span>
-                        {uploadingImage ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Upload className="mr-2 h-4 w-4" />
-                        )}
-                        Upload
-                      </span>
-                    </Button>
-                  </label>
+            <div className="flex-1">
+              <p className="text-sm text-steel-gray mb-3">
+                {mode === 'create'
+                  ? 'Upload a photo or logo for this contact. The image will be saved when you create the contact. Max file size: 5MB.'
+                  : 'Upload a photo or logo for this contact. Max file size: 5MB.'}
+              </p>
+              <div className="flex gap-2">
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={handleImageSelect}
+                    disabled={uploadingImage}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={uploadingImage}
+                    asChild
+                  >
+                    <span>
+                      {uploadingImage ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <Upload className="mr-2 h-4 w-4" />
+                      )}
+                      Upload
+                    </span>
+                  </Button>
+                </label>
 
-                  {imageUrl && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleImageDelete}
-                      disabled={uploadingImage}
-                    >
-                      <X className="mr-2 h-4 w-4" />
-                      Remove
-                    </Button>
-                  )}
-                </div>
+                {imageUrl && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleImageDelete}
+                    disabled={uploadingImage}
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Remove
+                  </Button>
+                )}
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -318,17 +429,6 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, contact_person: e.target.value })
                 }
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="trade">Trade *</Label>
-              <Input
-                id="trade"
-                required
-                placeholder="e.g., Electrician, Plumber"
-                value={formData.trade}
-                onChange={(e) => setFormData({ ...formData, trade: e.target.value })}
               />
             </div>
 
@@ -405,18 +505,15 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
             />
           </div>
 
-          <div className="flex gap-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : mode === 'create' ? 'Create Contact' : 'Update Contact'}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push('/contacts')}
-            >
-              Cancel
-            </Button>
-          </div>
+          {/* Category Selector */}
+          <CategorySelector
+            contactId={contact?.id}
+            mode={mode}
+            onAssignmentsChange={setCategoryAssignments}
+          />
+
+          {/* Add bottom padding for sticky footer */}
+          <div className="pb-24" />
         </form>
       </CardContent>
 
@@ -435,5 +532,53 @@ export function ContactForm({ contact, mode }: ContactFormProps) {
         />
       )}
     </Card>
+  );
+}
+
+/**
+ * ContactFormWrapper Component
+ *
+ * Wrapper component that includes the form and sticky footer
+ */
+interface ContactFormWrapperProps {
+  contact?: Contact;
+  mode: 'create' | 'edit';
+}
+
+export function ContactFormWrapper({ contact, mode }: ContactFormWrapperProps) {
+  const router = useRouter();
+
+  const handleSubmit = () => {
+    const form = document.querySelector('form');
+    if (form) {
+      form.requestSubmit();
+    }
+  };
+
+  return (
+    <>
+      <ContactForm contact={contact} mode={mode} />
+
+      {/* Sticky Footer Bar */}
+      <div className="fixed bottom-0 left-0 right-0 md:left-64 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 z-50">
+        <div className="mx-auto max-w-7xl px-4 md:px-8">
+          <div className="flex justify-end gap-3 py-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push('/contacts')}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleSubmit}
+            >
+              {mode === 'create' ? 'Create Contact' : 'Update Contact'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

@@ -12,17 +12,29 @@ import { SendSMSModal } from '@/components/sms/send-sms-modal';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 
+type CategoryAssignment = {
+  id: string;
+  category: {
+    id: string;
+    name: string;
+  };
+  sub_type: {
+    id: string;
+    name: string;
+  } | null;
+};
+
 type Contact = {
   id: string;
   company_name: string;
   contact_person: string;
-  trade: string;
   phone_primary: string;
   phone_secondary: string | null;
   email: string | null;
   lead_time_days: number;
   is_active: boolean;
   image_url: string | null;
+  contact_category_assignments?: CategoryAssignment[];
 };
 
 interface ContactCardProps {
@@ -56,11 +68,21 @@ export function ContactCard({ contact, onDelete, isDeleting }: ContactCardProps)
             {contact.contact_person}
           </p>
 
-          {/* Trade Badge */}
-          <div className="mt-1 mb-4">
-            <span className="inline-flex items-center rounded-full bg-sky-blue/10 pr-2.5 py-0.5 text-xs font-medium text-sky-blue">
-              {contact.trade}
-            </span>
+          {/* Category Badges */}
+          <div className="mt-2 mb-4 flex flex-wrap gap-1">
+            {contact.contact_category_assignments && contact.contact_category_assignments.length > 0 ? (
+              contact.contact_category_assignments.map((assignment) => (
+                <span
+                  key={assignment.id}
+                  className="inline-flex items-center rounded-full bg-everbuild-orange/10 px-2.5 py-0.5 text-xs font-medium text-everbuild-orange"
+                >
+                  {assignment.category.name}
+                  {assignment.sub_type && ` → ${assignment.sub_type.name}`}
+                </span>
+              ))
+            ) : (
+              <span className="text-steel-gray text-xs italic">No categories assigned</span>
+            )}
           </div>
         </div>
 

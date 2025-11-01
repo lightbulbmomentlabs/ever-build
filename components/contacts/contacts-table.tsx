@@ -25,17 +25,29 @@ import { SendSMSModal } from '@/components/sms/send-sms-modal';
 import { ContactAvatar } from '@/components/contacts/contact-avatar';
 import { ContactCard } from '@/components/contacts/contact-card';
 
+type CategoryAssignment = {
+  id: string;
+  category: {
+    id: string;
+    name: string;
+  };
+  sub_type: {
+    id: string;
+    name: string;
+  } | null;
+};
+
 type Contact = {
   id: string;
   company_name: string;
   contact_person: string;
-  trade: string;
   phone_primary: string;
   phone_secondary: string | null;
   email: string | null;
   lead_time_days: number;
   is_active: boolean;
   image_url: string | null;
+  contact_category_assignments?: CategoryAssignment[];
 };
 
 interface ContactsTableProps {
@@ -68,8 +80,7 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
   const filteredContacts = contacts.filter(
     (contact) =>
       contact.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.contact_person.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contact.trade.toLowerCase().includes(searchTerm.toLowerCase())
+      contact.contact_person.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDeleteClick = (contactId: string, contactName: string) => {
@@ -142,17 +153,15 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
                 <TableHead className="w-16"></TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead>Contact Person</TableHead>
-                <TableHead>Trade</TableHead>
+                <TableHead>Categories</TableHead>
                 <TableHead>Phone</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Lead Time</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredContacts.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-steel-gray">
+                  <TableCell colSpan={6} className="text-center text-steel-gray">
                     No contacts found.
                   </TableCell>
                 </TableRow>
@@ -168,10 +177,24 @@ export function ContactsTable({ contacts: initialContacts }: ContactsTableProps)
                     </TableCell>
                     <TableCell className="font-medium">{contact.company_name}</TableCell>
                     <TableCell>{contact.contact_person}</TableCell>
-                    <TableCell>{contact.trade}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {contact.contact_category_assignments && contact.contact_category_assignments.length > 0 ? (
+                          contact.contact_category_assignments.map((assignment) => (
+                            <span
+                              key={assignment.id}
+                              className="inline-flex items-center rounded-full bg-everbuild-orange/10 px-2.5 py-0.5 text-xs font-medium text-everbuild-orange"
+                            >
+                              {assignment.category.name}
+                              {assignment.sub_type && ` → ${assignment.sub_type.name}`}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-steel-gray text-sm">-</span>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>{formatPhoneDisplay(contact.phone_primary)}</TableCell>
-                    <TableCell>{contact.email || '-'}</TableCell>
-                    <TableCell>{contact.lead_time_days} days</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <SendSMSModal

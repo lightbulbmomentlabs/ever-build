@@ -13,28 +13,35 @@ type ContactInsert = Database['public']['Tables']['contacts']['Insert'];
 type ContactUpdate = Database['public']['Tables']['contacts']['Update'];
 
 /**
- * Get all contacts for an organization
+ * Get all contacts for an organization with their category assignments
  */
 export async function getContacts(
   organizationId: string,
   filters?: {
-    trade?: string;
     is_active?: boolean;
     search?: string;
   }
-): Promise<Contact[]> {
+): Promise<any[]> {
   const supabase = getServerSupabaseClient();
 
   let query = supabase
     .from('contacts')
-    .select('*')
+    .select(`
+      *,
+      contact_category_assignments(
+        id,
+        category:contact_categories(
+          id,
+          name
+        ),
+        sub_type:contact_sub_types(
+          id,
+          name
+        )
+      )
+    `)
     .eq('organization_id', organizationId)
     .order('company_name', { ascending: true });
-
-  // Apply filters
-  if (filters?.trade) {
-    query = query.eq('trade', filters.trade);
-  }
 
   // Default to only active contacts unless explicitly filtering
   if (filters?.is_active !== undefined) {
@@ -45,7 +52,7 @@ export async function getContacts(
 
   if (filters?.search) {
     query = query.or(
-      `company_name.ilike.%${filters.search}%,contact_person.ilike.%${filters.search}%,trade.ilike.%${filters.search}%`
+      `company_name.ilike.%${filters.search}%,contact_person.ilike.%${filters.search}%`
     );
   }
 
@@ -147,6 +154,7 @@ export async function deleteContact(
 
 /**
  * Get unique trades from contacts
+ * @deprecated Use getContactCategories instead
  */
 export async function getContactTrades(organizationId: string): Promise<string[]> {
   const supabase = getServerSupabaseClient();
@@ -164,6 +172,125 @@ export async function getContactTrades(organizationId: string): Promise<string[]
   // Get unique trades
   const trades = [...new Set(data.map((c) => c.trade))];
   return trades.sort();
+}
+
+/**
+ * Get all contact categories with their sub-types
+ */
+export async function getContactCategories() {
+  const supabase = getServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('contact_categories')
+    .select(`
+      id,
+      name,
+      description,
+      sort_order,
+      sub_types:contact_sub_types(
+        id,
+        name,
+        description,
+        sort_order
+      )
+    `)
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to get contact categories: ${error.message}`);
+  }
+
+  // Sort sub-types within each category
+  return (data || []).map((category) => ({
+    ...category,
+    sub_types: (category.sub_types || []).sort(
+      (a: any, b: any) => a.sort_order - b.sort_order
+    ),
+  }));
+}
+
+/**
+ * Get category assignments for a contact
+ */
+export async function getContactCategoryAssignments(contactId: string) {
+  const supabase = getServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('contact_category_assignments')
+    .select(`
+      id,
+      category:contact_categories(
+        id,
+        name
+      ),
+      sub_type:contact_sub_types(
+        id,
+        name
+      ),
+      created_at
+    `)
+    .eq('contact_id', contactId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to get category assignments: ${error.message}`);
+  }
+
+  return data || [];
+}
+
+/**
+ * Assign a category/sub-type to a contact
+ */
+export async function assignContactCategory(
+  contactId: string,
+  categoryId: string,
+  subTypeId: string
+) {
+  const supabase = getServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('contact_category_assignments')
+    .insert({
+      contact_id: contactId,
+      category_id: categoryId,
+      sub_type_id: subTypeId,
+    })
+    .select(`
+      id,
+      category:contact_categories(
+        id,
+        name
+      ),
+      sub_type:contact_sub_types(
+        id,
+        name
+      ),
+      created_at
+    `)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to assign category: ${error.message}`);
+  }
+
+  return data;
+}
+
+/**
+ * Remove a category assignment from a contact
+ */
+export async function removeContactCategory(assignmentId: string): Promise<void> {
+  const supabase = getServerSupabaseClient();
+
+  const { error } = await supabase
+    .from('contact_category_assignments')
+    .delete()
+    .eq('id', assignmentId);
+
+  if (error) {
+    throw new Error(`Failed to remove category assignment: ${error.message}`);
+  }
 }
 
 /**

@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { getUserByClerkId } from '@/lib/services/user.service';
 import { getContactById } from '@/lib/services/contact.service';
-import { ContactForm } from '@/components/contacts/contact-form';
+import { ContactFormWrapper } from '@/components/contacts/contact-form';
 
 /**
  * Edit Contact Page
@@ -36,7 +36,7 @@ export default async function EditContactPage({
         <p className="mt-2 text-steel-gray">Update contact information</p>
       </div>
 
-      <ContactForm mode="edit" contact={contact} />
+      <ContactFormWrapper mode="edit" contact={contact} />
     </div>
   );
 }
