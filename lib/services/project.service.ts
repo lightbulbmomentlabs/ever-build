@@ -43,6 +43,9 @@ export async function getProjects(
   // Apply filters
   if (filters?.status) {
     query = query.eq('status', filters.status);
+  } else {
+    // Default to excluding archived projects unless explicitly filtering
+    query = query.neq('status', 'archived');
   }
 
   if (filters?.search) {
@@ -202,7 +205,7 @@ export async function updateProject(
 }
 
 /**
- * Delete a project (hard delete from database)
+ * Delete a project (soft delete by setting status to archived)
  */
 export async function deleteProject(
   projectId: string,
@@ -210,9 +213,10 @@ export async function deleteProject(
 ): Promise<void> {
   const supabase = getServerSupabaseClient();
 
+  // Soft delete by setting status to archived
   const { error } = await supabase
     .from('projects')
-    .delete()
+    .update({ status: 'archived' })
     .eq('id', projectId)
     .eq('organization_id', organizationId);
 
