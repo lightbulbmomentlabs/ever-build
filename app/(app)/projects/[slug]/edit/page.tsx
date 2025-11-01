@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { getUserByClerkId } from '@/lib/services/user.service';
 import { getProjectBySlug } from '@/lib/services/project.service';
-import { ProjectForm } from '@/components/projects/project-form';
+import { ProjectFormWrapper } from '@/components/projects/project-form';
 
 /**
  * Edit Project Page
@@ -36,7 +36,7 @@ export default async function EditProjectPage({
         <p className="mt-2 text-steel-gray">Update project information</p>
       </div>
 
-      <ProjectForm mode="edit" project={project} />
+      <ProjectFormWrapper mode="edit" project={project} />
     </div>
   );
 }

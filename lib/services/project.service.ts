@@ -202,7 +202,7 @@ export async function updateProject(
 }
 
 /**
- * Delete a project (soft delete by setting status to archived)
+ * Delete a project (hard delete from database)
  */
 export async function deleteProject(
   projectId: string,
@@ -212,7 +212,7 @@ export async function deleteProject(
 
   const { error } = await supabase
     .from('projects')
-    .update({ status: 'archived' })
+    .delete()
     .eq('id', projectId)
     .eq('organization_id', organizationId);
 

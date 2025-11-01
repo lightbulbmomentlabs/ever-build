@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { ProjectForm } from '@/components/projects/project-form';
+import { ProjectFormWrapper } from '@/components/projects/project-form';
 
 /**
  * New Project Page
@@ -21,7 +21,7 @@ export default async function NewProjectPage() {
         <p className="mt-2 text-steel-gray">Add a new construction project</p>
       </div>
 
-      <ProjectForm mode="create" />
+      <ProjectFormWrapper mode="create" />
     </div>
   );
 }

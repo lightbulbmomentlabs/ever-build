@@ -8,6 +8,7 @@
  */
 
 import Link from 'next/link';
+import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/circular-progress';
 import { calculateCompletionPercentage } from '@/lib/utils/project-metrics';
@@ -103,13 +104,13 @@ export function ProjectCard({ project, onDelete, isDeleting }: ProjectCardProps)
           </Button>
         </Link>
         <Button
-          variant="destructive"
+          variant="ghost"
           size="sm"
           onClick={() => onDelete(project.slug, project.id)}
-          disabled={isDeleting || project.status === 'archived'}
-          className="flex-1 min-h-[44px]"
+          disabled={isDeleting}
+          className="min-h-[44px] min-w-[44px] text-steel-gray hover:text-error-red hover:bg-error-red/10"
         >
-          Archive
+          <Trash2 className="h-5 w-5" />
         </Button>
       </div>
     </div>

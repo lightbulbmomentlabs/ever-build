@@ -10,6 +10,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { Trash2 } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -21,6 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { CircularProgress } from '@/components/ui/circular-progress';
+import { DestructiveConfirmationDialog } from '@/components/ui/destructive-confirmation-dialog';
 import { ProjectCard } from './project-card';
 import { calculateCompletionPercentage } from '@/lib/utils/project-metrics';
 import type { ProjectWithPhases } from '@/lib/services/project.service';
@@ -56,6 +58,8 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<{ slug: string; id: string; name: string } | null>(null);
 
   // Filter projects based on search term and status
   const filteredProjects = projects.filter((project) => {
@@ -69,30 +73,30 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
     return matchesSearch && matchesStatus;
   });
 
-  const handleDelete = async (projectSlug: string, projectId: string) => {
-    if (!confirm('Are you sure you want to archive this project? This will set it to archived status.')) {
-      return;
-    }
+  const handleDeleteClick = (projectSlug: string, projectId: string, projectName: string) => {
+    setProjectToDelete({ slug: projectSlug, id: projectId, name: projectName });
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!projectToDelete) return;
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/projects/${projectSlug}`, {
+      const response = await fetch(`/api/projects/${projectToDelete.slug}`, {
         method: 'DELETE',
       });
 
       if (!response.ok) {
-        throw new Error('Failed to archive project');
+        throw new Error('Failed to delete project');
       }
 
-      // Update local state to set status as archived
-      setProjects(
-        projects.map((p) =>
-          p.id === projectId ? { ...p, status: 'archived' as const } : p
-        )
-      );
+      // Remove project from local state
+      setProjects(projects.filter((p) => p.id !== projectToDelete.id));
+      setProjectToDelete(null);
     } catch (error) {
-      console.error('Error archiving project:', error);
-      alert('Failed to archive project. Please try again.');
+      console.error('Error deleting project:', error);
+      alert('Failed to delete project. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +140,7 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
             <ProjectCard
               key={project.id}
               project={project}
-              onDelete={handleDelete}
+              onDelete={(slug, id) => handleDeleteClick(slug, id, project.name)}
               isDeleting={isLoading}
             />
           ))
@@ -212,12 +216,13 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
                           </Button>
                         </Link>
                         <Button
-                          variant="destructive"
+                          variant="ghost"
                           size="sm"
-                          onClick={() => handleDelete(project.slug, project.id)}
-                          disabled={isLoading || project.status === 'archived'}
+                          onClick={() => handleDeleteClick(project.slug, project.id, project.name)}
+                          disabled={isLoading}
+                          className="text-steel-gray hover:text-error-red hover:bg-error-red/10"
                         >
-                          Archive
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -228,6 +233,19 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <DestructiveConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Project"
+        description={`Are you sure you want to delete ${projectToDelete?.name}? This will permanently remove the project and all associated phases, tasks, and documents.`}
+        itemName={projectToDelete?.name}
+        confirmationWord="DELETE"
+        confirmButtonLabel="Delete Project"
+        isLoading={isLoading}
+      />
     </div>
   );
 }

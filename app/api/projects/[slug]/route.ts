@@ -3,7 +3,7 @@
  *
  * GET    /api/projects/[slug] - Get a project by slug
  * PATCH  /api/projects/[slug] - Update a project
- * DELETE /api/projects/[slug] - Delete a project (soft delete)
+ * DELETE /api/projects/[slug] - Delete a project
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -93,7 +93,7 @@ export async function PATCH(
 
 /**
  * DELETE /api/projects/[slug]
- * Soft delete a project (set status to archived)
+ * Delete a project from the database
  */
 export async function DELETE(
   req: NextRequest,

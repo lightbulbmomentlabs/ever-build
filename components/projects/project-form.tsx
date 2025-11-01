@@ -12,6 +12,66 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+const US_STATES = [
+  { value: 'AL', label: 'Alabama' },
+  { value: 'AK', label: 'Alaska' },
+  { value: 'AZ', label: 'Arizona' },
+  { value: 'AR', label: 'Arkansas' },
+  { value: 'CA', label: 'California' },
+  { value: 'CO', label: 'Colorado' },
+  { value: 'CT', label: 'Connecticut' },
+  { value: 'DE', label: 'Delaware' },
+  { value: 'FL', label: 'Florida' },
+  { value: 'GA', label: 'Georgia' },
+  { value: 'HI', label: 'Hawaii' },
+  { value: 'ID', label: 'Idaho' },
+  { value: 'IL', label: 'Illinois' },
+  { value: 'IN', label: 'Indiana' },
+  { value: 'IA', label: 'Iowa' },
+  { value: 'KS', label: 'Kansas' },
+  { value: 'KY', label: 'Kentucky' },
+  { value: 'LA', label: 'Louisiana' },
+  { value: 'ME', label: 'Maine' },
+  { value: 'MD', label: 'Maryland' },
+  { value: 'MA', label: 'Massachusetts' },
+  { value: 'MI', label: 'Michigan' },
+  { value: 'MN', label: 'Minnesota' },
+  { value: 'MS', label: 'Mississippi' },
+  { value: 'MO', label: 'Missouri' },
+  { value: 'MT', label: 'Montana' },
+  { value: 'NE', label: 'Nebraska' },
+  { value: 'NV', label: 'Nevada' },
+  { value: 'NH', label: 'New Hampshire' },
+  { value: 'NJ', label: 'New Jersey' },
+  { value: 'NM', label: 'New Mexico' },
+  { value: 'NY', label: 'New York' },
+  { value: 'NC', label: 'North Carolina' },
+  { value: 'ND', label: 'North Dakota' },
+  { value: 'OH', label: 'Ohio' },
+  { value: 'OK', label: 'Oklahoma' },
+  { value: 'OR', label: 'Oregon' },
+  { value: 'PA', label: 'Pennsylvania' },
+  { value: 'RI', label: 'Rhode Island' },
+  { value: 'SC', label: 'South Carolina' },
+  { value: 'SD', label: 'South Dakota' },
+  { value: 'TN', label: 'Tennessee' },
+  { value: 'TX', label: 'Texas' },
+  { value: 'UT', label: 'Utah' },
+  { value: 'VT', label: 'Vermont' },
+  { value: 'VA', label: 'Virginia' },
+  { value: 'WA', label: 'Washington' },
+  { value: 'WV', label: 'West Virginia' },
+  { value: 'WI', label: 'Wisconsin' },
+  { value: 'WY', label: 'Wyoming' },
+];
 
 type Project = {
   id?: string;
@@ -132,21 +192,45 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
             </div>
           )}
 
-          {/* Project Name */}
-          <div className="space-y-2">
-            <Label htmlFor="name">Project Name *</Label>
-            <Input
-              id="name"
-              required
-              placeholder="e.g., Sunset Hills Development - Lot 42"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
+          {/* Project Name and Status */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="name">Project Name *</Label>
+              <Input
+                id="name"
+                required
+                placeholder="e.g., Sunset Hills Development - Lot 42"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="status">Status *</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => setFormData({ ...formData, status: value as Project['status'] })}
+              >
+                <SelectTrigger id="status">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="not_started">Not Started</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="on_hold">On Hold</SelectItem>
+                  <SelectItem value="under_contract">Under Contract</SelectItem>
+                  <SelectItem value="irsa">IRSA</SelectItem>
+                  <SelectItem value="sold">Sold</SelectItem>
+                  <SelectItem value="warranty_period">Warranty Period</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Address Section */}
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2 md:col-span-2">
+          <div className="space-y-4">
+            <div className="space-y-2">
               <Label htmlFor="address">Street Address *</Label>
               <Input
                 id="address"
@@ -157,38 +241,46 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="city">City *</Label>
-              <Input
-                id="city"
-                required
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-              />
-            </div>
+            <div className="grid gap-4 md:grid-cols-6">
+              <div className="space-y-2 md:col-span-3">
+                <Label htmlFor="city">City *</Label>
+                <Input
+                  id="city"
+                  required
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="state">State *</Label>
-              <Input
-                id="state"
-                required
-                maxLength={2}
-                placeholder="CA"
-                value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value.toUpperCase() })}
-              />
-              <p className="text-xs text-steel-gray">Two letter state code (e.g., CA, TX, NY)</p>
-            </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="state">State *</Label>
+                <Select
+                  value={formData.state}
+                  onValueChange={(value) => setFormData({ ...formData, state: value })}
+                >
+                  <SelectTrigger id="state">
+                    <SelectValue placeholder="Select state" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {US_STATES.map((state) => (
+                      <SelectItem key={state.value} value={state.value}>
+                        {state.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="zip_code">ZIP Code *</Label>
-              <Input
-                id="zip_code"
-                required
-                placeholder="90210"
-                value={formData.zip_code}
-                onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="zip_code">ZIP Code *</Label>
+                <Input
+                  id="zip_code"
+                  required
+                  placeholder="90210"
+                  value={formData.zip_code}
+                  onChange={(e) => setFormData({ ...formData, zip_code: e.target.value })}
+                />
+              </div>
             </div>
           </div>
 
@@ -257,26 +349,6 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
                 onChange={(e) => setFormData({ ...formData, square_footage: e.target.value })}
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Status *</Label>
-              <select
-                id="status"
-                required
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value as Project['status'] })}
-              >
-                <option value="not_started">Not Started</option>
-                <option value="active">Active</option>
-                <option value="on_hold">On Hold</option>
-                <option value="under_contract">Under Contract</option>
-                <option value="irsa">IRSA</option>
-                <option value="sold">Sold</option>
-                <option value="warranty_period">Warranty Period</option>
-                <option value="archived">Archived</option>
-              </select>
-            </div>
           </div>
 
           {/* Dates */}
@@ -337,7 +409,7 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
           </div>
 
           {/* Notes */}
-          <div className="space-y-2">
+          <div className="space-y-2 pb-24">
             <Label htmlFor="notes">Notes</Label>
             <textarea
               id="notes"
@@ -347,11 +419,41 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             />
           </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
 
-          <div className="flex gap-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : mode === 'create' ? 'Create Project' : 'Update Project'}
-            </Button>
+/**
+ * ProjectFormWrapper Component
+ *
+ * Wrapper component that includes the form and sticky footer
+ */
+interface ProjectFormWrapperProps {
+  project?: Project;
+  mode: 'create' | 'edit';
+}
+
+export function ProjectFormWrapper({ project, mode }: ProjectFormWrapperProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = () => {
+    const form = document.querySelector('form');
+    if (form) {
+      form.requestSubmit();
+    }
+  };
+
+  return (
+    <>
+      <ProjectForm project={project} mode={mode} />
+
+      {/* Sticky Footer Bar */}
+      <div className="fixed bottom-0 left-0 right-0 md:left-64 border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 z-50">
+        <div className="mx-auto max-w-7xl px-4 md:px-8">
+          <div className="flex justify-end gap-3 py-4">
             <Button
               type="button"
               variant="outline"
@@ -359,9 +461,15 @@ export function ProjectForm({ project, mode }: ProjectFormProps) {
             >
               Cancel
             </Button>
+            <Button
+              type="button"
+              onClick={handleSubmit}
+            >
+              {mode === 'create' ? 'Create Project' : 'Update Project'}
+            </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+    </>
   );
 }
