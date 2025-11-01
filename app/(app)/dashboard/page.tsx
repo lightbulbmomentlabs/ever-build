@@ -6,6 +6,7 @@ import { getUserByClerkId } from '@/lib/services/user.service';
 import { getProjectStats, getProjectsWithPhases } from '@/lib/services/project.service';
 import { getContacts } from '@/lib/services/contact.service';
 import { CircularProgress } from '@/components/ui/circular-progress';
+import { DashboardEmptyState } from '@/components/dashboard/empty-state';
 import { calculateCompletionPercentage, calculateProjectDuration } from '@/lib/utils/project-metrics';
 
 /**
@@ -99,13 +100,7 @@ export default async function DashboardPage() {
         </div>
 
         {displayProjects.length === 0 ? (
-          <p className="text-sm md:text-base text-steel-gray">
-            No projects yet.{' '}
-            <Link href="/projects/new" className="text-blueprint-teal hover:underline">
-              Create your first project
-            </Link>{' '}
-            to get started.
-          </p>
+          <DashboardEmptyState />
         ) : (
           <div className="space-y-3">
             {displayProjects.map((project) => {
