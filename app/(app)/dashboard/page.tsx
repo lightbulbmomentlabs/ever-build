@@ -23,14 +23,12 @@ export default async function DashboardPage() {
   }
 
   try {
-    // Ensure user exists in Supabase (creates on first visit)
+    // Ensure user exists in Supabase (creates on first visit and returns user)
     console.log('[Dashboard] Ensuring user exists for userId:', userId);
-    await ensureUserExists();
+    const user = await ensureUserExists();
 
-    console.log('[Dashboard] Fetching user from Supabase');
-    const user = await getUserByClerkId(userId);
     if (!user) {
-      console.error('[Dashboard] User not found in Supabase after ensureUserExists');
+      console.error('[Dashboard] ensureUserExists returned null');
       throw new Error('User not found in database after sync');
     }
 
